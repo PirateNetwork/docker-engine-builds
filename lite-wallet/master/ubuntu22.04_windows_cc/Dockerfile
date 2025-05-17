@@ -60,7 +60,7 @@ ENV PATH=/root/.cargo/bin:$PATH
 RUN rustup update
 
 # Install rust toolchain version
-RUN rustup default 1.58.1
+RUN rustup default 1.86.0
 RUN rustup target add x86_64-pc-windows-gnu
 
 RUN git clone https://github.com/PirateNetwork/piratewallet-lite.git --branch master
