@@ -4,6 +4,7 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y \
   build-essential \
   pkg-config \
+  cmake \
   m4 \
   g++-multilib \
   autoconf \
@@ -25,8 +26,8 @@ RUN apt-get install -y \
 RUN update-alternatives --install /usr/bin/x86_64-w64-mingw32-gcc x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix 90
 RUN update-alternatives --install /usr/bin/x86_64-w64-mingw32-g++ x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix 90
 
-RUN git clone https://github.com/PirateNetwork/pirate --branch dev
-RUN cd pirate && ./zcutil/build-qt-win.sh
+RUN git clone https://github.com/PirateNetwork/pirate --branch master
+RUN cd pirate && ./zcutil/build-qt-win.sh -j12
 
 RUN strip pirate/src/pirated.exe
 RUN strip pirate/src/pirate-cli.exe

@@ -1,5 +1,0 @@
-#!/bin/bash -
-docker system df
-time docker build --no-cache -o . --target=binaries .
-docker buildx prune --all
-docker system df
