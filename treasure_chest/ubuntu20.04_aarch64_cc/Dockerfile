@@ -20,7 +20,8 @@ RUN apt-get install -y \
   bsdmainutils \
   curl \
   libsodium-dev \
-  bison
+  bison \
+  zip
 
 RUN apt-get install -y \
   gcc-aarch64-linux-gnu \
@@ -34,15 +35,13 @@ RUN echo 'linker = "/usr/bin/aarch64-linux-gnu-gcc-9"' >> /.cargo/config
 
 
 RUN git clone https://github.com/PirateNetwork/pirate --branch master
-RUN cd pirate && ./zcutil/build-qt-arm.sh -j12
+RUN cd pirate && ./zcutil/build-qt-aarch64.sh -j12
 
-RUN aarch64-linux-gnu-strip pirate/src/pirated
-RUN aarch64-linux-gnu-strip pirate/src/pirate-cli
-RUN aarch64-linux-gnu-strip pirate/src/pirate-tx
-RUN aarch64-linux-gnu-strip pirate/pirate-qt-arm
+# build-qt-aarch64.sh already strips artifacts/bin/ (with the correct
+# aarch64-linux-gnu-strip) and packages it into artifacts/bin/*.deb and
+# artifacts/bin/*.zip (pirate-qt-*, pirate-cli-*) - nothing left to strip
+# here.
 
 FROM scratch as binaries
-COPY --from=builder pirate/src/pirated .
-COPY --from=builder pirate/src/pirate-cli .
-COPY --from=builder pirate/src/pirate-tx .
-COPY --from=builder pirate/pirate-qt-arm .
+COPY --from=builder pirate/artifacts/bin/*.deb .
+COPY --from=builder pirate/artifacts/bin/*.zip .

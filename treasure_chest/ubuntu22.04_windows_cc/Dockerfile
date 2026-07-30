@@ -21,7 +21,8 @@ RUN apt-get install -y \
   libsodium-dev \
   bison \
   liblz4-dev \
-  mingw-w64
+  mingw-w64 \
+  zip
 
 RUN update-alternatives --install /usr/bin/x86_64-w64-mingw32-gcc x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix 90
 RUN update-alternatives --install /usr/bin/x86_64-w64-mingw32-g++ x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix 90
@@ -29,13 +30,10 @@ RUN update-alternatives --install /usr/bin/x86_64-w64-mingw32-g++ x86_64-w64-min
 RUN git clone https://github.com/PirateNetwork/pirate --branch master
 RUN cd pirate && ./zcutil/build-qt-win.sh
 
-RUN strip pirate/src/pirated.exe
-RUN strip pirate/src/pirate-cli.exe
-RUN strip pirate/src/pirate-tx.exe
-RUN strip pirate/pirate-qt-win.exe
+# build-qt-win.sh already strips artifacts/bin/ (with the correct
+# x86_64-w64-mingw32-strip) and packages it into artifacts/bin/*.zip
+# (pirate-qt-*, pirate-cli-*; no .deb - dpkg-deb doesn't apply to a Windows
+# target) - nothing left to strip here.
 
 FROM scratch as binaries
-COPY --from=builder pirate/src/pirated.exe .
-COPY --from=builder pirate/src/pirate-cli.exe .
-COPY --from=builder pirate/src/pirate-tx.exe .
-COPY --from=builder pirate/pirate-qt-win.exe .
+COPY --from=builder pirate/artifacts/bin/*.zip .
